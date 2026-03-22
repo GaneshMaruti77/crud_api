@@ -19,10 +19,11 @@ app.post("/products",(req,res)=>{
   res.json(newitem);
 })
 app.put("/products/:id",(req,res)=>{
+  try{
   const id = parseInt(req.params.id);
   const product = products.find(p=>p.id===id);
   if(!product){
-    throw new error("product not found ");
+    throw new Error("product not found ");
   }
   const updateitem = req.body;
   if(updateitem.name!==undefined){
@@ -32,29 +33,37 @@ app.put("/products/:id",(req,res)=>{
     product.price=updateitem.price;
   }
   res.status(200).json(product);
+}catch(err){
   next(err);
+}
 })
 app.delete("/products/:id",(req,res)=>{
+  try{
   const id = parseInt(req.params.id)
   const Index = products.findIndex(p=>p.id===id);
   if(Index===-1){
-    throw new error("Item not found");
+    throw new Error("Item not found");
   }
 
   products.splice(Index,1);
   
-  res.status(200).json({message:"item deleted"})
+  res.status(200).json({message:"item deleted"});
+}catch(err){
   next(err);
+}
 })
 app.listen(3000,()=>
 {
   console.log("Server is running on 3000");
 })
 app.get("/crash",(req,res)=>{
-  throw new error("manual error");
+  try{
+  throw new Error("manual error");
+  }catch(err){
   next(err);
+  }
 })
-app.use((req,res,err,next)=>{
+app.use((err,req,res,next)=>{
   console.error("Error:", err.message);
-  res.status(500).json({error:"Internal Server Error"});
+  res.status(500).json({error:err.message});
 })
