@@ -18,7 +18,7 @@ app.post("/products",(req,res)=>{
   products.push(newitem);
   res.json(newitem);
 })
-app.put("/products/:id",(req,res)=>{
+app.put("/products/:id",(req,res,next)=>{
   try{
   const id = parseInt(req.params.id);
   const product = products.find(p=>p.id===id);
@@ -37,7 +37,7 @@ app.put("/products/:id",(req,res)=>{
   next(err);
 }
 })
-app.delete("/products/:id",(req,res)=>{
+app.delete("/products/:id",(req,res,next)=>{
   try{
   const id = parseInt(req.params.id)
   const Index = products.findIndex(p=>p.id===id);
@@ -56,7 +56,7 @@ app.listen(3000,()=>
 {
   console.log("Server is running on 3000");
 })
-app.get("/crash",(req,res)=>{
+app.get("/crash",(req,res,next)=>{
   try{
   throw new Error("manual error");
   }catch(err){
