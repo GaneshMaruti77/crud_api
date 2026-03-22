@@ -22,7 +22,7 @@ app.put("/products/:id",(req,res)=>{
   const id = parseInt(req.params.id);
   const product = products.find(p=>p.id===id);
   if(!product){
-    return res.status(404).json({error:"item not found"});
+    throw new error("product not found ");
   }
   const updateitem = req.body;
   if(updateitem.name!==undefined){
@@ -32,19 +32,29 @@ app.put("/products/:id",(req,res)=>{
     product.price=updateitem.price;
   }
   res.status(200).json(product);
+  next(err);
 })
 app.delete("/products/:id",(req,res)=>{
   const id = parseInt(req.params.id)
   const Index = products.findIndex(p=>p.id===id);
   if(Index===-1){
-    res.status(404).json({error:"item not found"})
+    throw new error("Item not found");
   }
 
   products.splice(Index,1);
   
   res.status(200).json({message:"item deleted"})
+  next(err);
 })
 app.listen(3000,()=>
 {
   console.log("Server is running on 3000");
+})
+app.get("/crash",(req,res)=>{
+  throw new error("manual error");
+  next(err);
+})
+app.use((req,res,err,next)=>{
+  console.error("Error:", err.message);
+  res.status(500).json({error:"Internal Server Error"});
 })
